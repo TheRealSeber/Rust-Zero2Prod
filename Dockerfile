@@ -5,7 +5,7 @@ RUN apt update \
     && apt install pkg-config -y \
     && apt install libssl-dev -y
 
-FROM chef as planner
+FROM chef AS planner
 COPY . .
 # Compute a lock-like file for our project
 RUN cargo chef prepare --recipe-path recipe.json
@@ -20,7 +20,7 @@ COPY . .
 ENV SQLX_OFFLINE true
 RUN cargo build --release
 
-FROM debian:bullseye-slim AS runtime
+FROM debian:bookworm-slim AS runtime
 
 WORKDIR /app
 
