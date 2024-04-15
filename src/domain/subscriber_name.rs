@@ -1,11 +1,9 @@
+use serde::Deserialize;
+use std::fmt;
 use unicode_segmentation::UnicodeSegmentation;
 
-pub struct NewSubscriber {
-    pub email: String,
-    pub name: SubscriberName,
-}
-
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
+#[serde(try_from = "String")]
 pub struct SubscriberName(String);
 
 impl TryFrom<String> for SubscriberName {
@@ -16,11 +14,10 @@ impl TryFrom<String> for SubscriberName {
         let is_too_long = name.graphemes(true).count() > 256;
         let forbidden_characters = ['/', '(', ')', '"', '<', '>', '\\', '{', '}'];
         let has_forbidden_characters = name.chars().any(|c| forbidden_characters.contains(&c));
-        match is_empty_or_whitespace || is_too_long || has_forbidden_characters 
-        {
+        match is_empty_or_whitespace || is_too_long || has_forbidden_characters {
             true => Err(format!("{} is not a not valid name!", name)),
             false => Ok(Self(name)),
-        }  
+        }
     }
 }
 
@@ -30,9 +27,15 @@ impl AsRef<str> for SubscriberName {
     }
 }
 
+impl fmt::Display for SubscriberName {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::domain::SubscriberName;
+    use super::SubscriberName;
     use claim::{assert_err, assert_ok};
 
     #[test]
