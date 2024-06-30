@@ -1,4 +1,4 @@
-use crate::domain::{subscriber_email::SubscriberEmail, subscriber_name::SubscriberName};
+use crate::domain::{SubscriberEmail, SubscriberName};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
